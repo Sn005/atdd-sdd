@@ -223,7 +223,83 @@
 
 ---
 
+## ブランチ・PR連携
+
+本Skillは `/branch` と `/pr` を自動的に呼び出します。
+
+### 連携フロー
+
+```
+/spec 開始
+    │
+    ├─ Phase 1: Requirements Discovery
+    │
+    ├─ Phase 2: Design Exploration
+    │
+    ├─ Phase 3: Task Breakdown
+    │       │
+    │       └─ ユーザー確認後 → /branch 発火
+    │          ブランチ: spec/{action-id}-{description}
+    │
+    ├─ ファイル生成
+    │   - specs/phases/{id}.md
+    │   - specs/tasks/{id}.md
+    │   - specs/actions/{id}.md
+    │
+    └─ 完了時 → /pr 発火
+        PR: 仕様レビュー用
+```
+
+### /branch 呼び出し
+
+ファイル生成前に自動発火：
+
+```
+Claude: 仕様ファイルを生成する前に、ブランチを作成します。
+
+        ブランチ名: spec/001-01-01-user-auth
+        ベース: main
+
+        作成してよいですか？
+```
+
+### /pr 呼び出し
+
+ファイル生成完了後に自動発火：
+
+```
+Claude: 仕様ファイルの生成が完了しました。
+
+        PRを作成しますか？
+        タイトル: spec: ユーザー認証機能の仕様策定
+
+        ## Summary
+        - 001-01-01 の仕様を策定
+        - specs/actions/001-01-01.md を作成
+
+        ## レビュー観点
+        - [ ] ユーザーストーリーが明確か
+        - [ ] ACがEARS記法で記述されているか
+```
+
+---
+
 ## 関連Skill
 
+- **/branch**: ブランチ作成（本Skillから自動呼び出し）
+- **/pr**: PR作成（本Skillから自動呼び出し）
 - **spec-workflow**: 本Skillで生成した仕様書に基づいて実装を行う
-- 連携フロー: `/spec` → ファイル生成 → `spec-workflow` で実装
+
+### 全体連携フロー
+
+```
+/spec（仕様策定）
+    ├─ /branch 発火（spec/*）
+    ├─ ファイル生成
+    └─ /pr 発火（仕様レビュー）
+        ↓ マージ後
+spec-workflow（実装）
+    ├─ /branch 発火（impl/*）
+    ├─ TDD実装
+    └─ /pr 発火（実装レビュー）
+```
