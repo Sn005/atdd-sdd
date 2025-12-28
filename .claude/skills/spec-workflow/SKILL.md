@@ -5,8 +5,11 @@ description: 仕様駆動開発（SDD）ワークフローを自動発動で強�
 
 # Spec-Driven Development Workflow Skill
 
-仕様駆動開発（SDD）のワークフローを自動発動で強制するスキルです。
+仕様駆動開発（SDD）の**下流工程（実装）** を担当するスキルです。
 フェーズ → タスク → アクションの3階層構造に基づいた開発を行います。
+
+> **Note**: 仕様策定（上流工程）は `/spec` Skill で行います。
+> 連携フロー: `/spec`（仕様策定）→ `spec-workflow`（実装）
 
 ## 発動条件
 
@@ -34,6 +37,36 @@ description: 仕様駆動開発（SDD）ワークフローを自動発動で強�
 🔴 Red   : ACからテストケースを導出 → 失敗するテストを書く
 🟢 Green : テストを通す最小限の実装
 🔵 Refactor : テストを保ちながらコード改善
+```
+
+### EARS記法対応
+
+ACがEARS記法で記述されている場合、テストケース導出を効率化：
+
+```typescript
+// EARS記法のAC例:
+// WHEN ユーザーがログインを試行する際
+// GIVEN 有効なメールとパスワードを入力した場合
+// THEN システムはJWTトークンを発行する
+// AND ダッシュボードにリダイレクトする
+
+// テストケースへの変換:
+describe('ログイン', () => {
+  it('有効な認証情報でJWTトークンが発行される', () => {
+    // GIVEN: 前提条件をセットアップ
+    const credentials = { email: 'valid@example.com', password: 'validPass' };
+
+    // WHEN: トリガーを実行
+    const result = login(credentials);
+
+    // THEN: 期待結果を検証
+    expect(result.token).toBeDefined();
+  });
+
+  it('成功時にダッシュボードへリダイレクトする', () => {
+    // AND条件のテスト
+  });
+});
 ```
 
 ### 3. スコープ管理（必須）

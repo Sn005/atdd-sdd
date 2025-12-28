@@ -169,6 +169,41 @@ completed_at: null # 完了時に日付を記入
 - [ ] ESLint、Prettier、TypeScriptの設定内容が仕様として確定していること
 - [ ] package.jsonスクリプトの統一方針が決定されていること
 
+## 設計（オプション）
+
+複雑なアクションの場合、実装前に技術設計を明記します。
+
+### データフロー
+
+```mermaid
+graph LR
+    A[入力] --> B[処理]
+    B --> C[出力]
+```
+
+### インターフェース定義
+
+```typescript
+interface ConfigRequirements {
+  eslint: ESLintConfig;
+  prettier: PrettierConfig;
+  typescript: TypeScriptConfig;
+}
+
+interface ESLintConfig {
+  configPath: string;
+  rules: Record<string, unknown>;
+}
+```
+
+### 技術的考慮事項
+
+- 依存関係
+- パフォーマンス要件
+- セキュリティ考慮
+
+---
+
 ## 実装メモ
 
 （実装時に記録する内容）
@@ -233,7 +268,74 @@ describe('設定要件の確認と決定', () => {
 - **独立**: 他のACに依存しない
 - **テスト可能**: テストケースに変換可能
 
-### 例
+### EARS記法（推奨）
+
+EARS（Easy Approach to Requirements Syntax）記法は、曖昧さを排除し、テストケースへの直接変換を容易にする構造化された要件記述方式です。
+
+#### 基本パターン
+
+```markdown
+WHEN [トリガー・状況]
+GIVEN [前提条件]
+THEN [期待動作]
+AND [追加動作]
+```
+
+#### パターン別テンプレート
+
+**イベント駆動型（Event-Driven）**
+```markdown
+WHEN ユーザーがログインボタンをクリックした際
+GIVEN 正しいメールアドレスとパスワードを入力した場合
+THEN システムは認証を確認する
+AND 成功時はダッシュボードにリダイレクトする
+```
+
+**状態依存型（State-Driven）**
+```markdown
+WHILE システムがメンテナンスモードの間
+THE SYSTEM SHALL 読み取り専用アクセスのみ許可する
+AND 書き込み操作は全て拒否する
+```
+
+**条件付き型（Condition-Driven）**
+```markdown
+WHERE 管理者権限が必要な機能に
+IF アクセスが試行された場合
+THE SYSTEM SHALL 権限レベルを確認する
+AND 不十分な場合はアクセス拒否する
+```
+
+**無条件型（Unconditional）**
+```markdown
+THE SYSTEM SHALL 全てのAPIリクエストをログに記録する
+```
+
+#### EARS記法の適用例
+
+**従来のAC:**
+```markdown
+- [ ] ユーザーがログインできること
+```
+
+**EARS記法適用後:**
+```markdown
+- [ ] WHEN ユーザーがログインを試行する際
+      GIVEN 有効なメールアドレスとパスワードを入力した場合
+      THEN システムはJWTトークンを発行する
+      AND ダッシュボードにリダイレクトする
+```
+
+#### 使い分けの指針
+
+| 状況 | 推奨形式 |
+|------|----------|
+| 複雑な条件分岐がある | EARS記法 |
+| エッジケースが多い | EARS記法 |
+| 単純な存在確認 | 従来形式でOK |
+| 設定ファイルの有無 | 従来形式でOK |
+
+### 従来形式の例
 
 **良い例:**
 - `ESLint設定ファイルがルートに存在すること`
