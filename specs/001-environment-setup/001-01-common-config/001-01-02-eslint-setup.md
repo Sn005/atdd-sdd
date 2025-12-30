@@ -1,9 +1,9 @@
 ---
 id: "001-01-02"
-phase_id: "001"
-task_id: "001-01"
-phase_title: "環境構築"
-task_title: "共通設定整備"
+epic_id: "001"
+story_id: "001-01"
+epic_title: "環境構築"
+story_title: "共通設定整備"
 title: "ESLint設定作成"
 status: "pending"
 created_at: "2024-01-01"
@@ -11,13 +11,13 @@ updated_at: "2024-01-01"
 completed_at: null
 ---
 
-# アクション: ESLint設定作成
+# Subtask: ESLint設定作成
 
-## 親タスク
+## 親Story
 
-[001-01: 共通設定整備](../tasks/001-01-common-config.md)
+[001-01: 共通設定整備](./001-01-common-config.md)
 
-## 前提アクション
+## 前提Subtask
 
 - [001-01-01: 設定要件の確認と決定](./001-01-01-config-requirements.md) が完了していること
 

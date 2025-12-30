@@ -1,9 +1,9 @@
 ---
 id: "001-01-01"
-phase_id: "001"
-task_id: "001-01"
-phase_title: "環境構築"
-task_title: "共通設定整備"
+epic_id: "001"
+story_id: "001-01"
+epic_title: "環境構築"
+story_title: "共通設定整備"
 title: "設定要件の確認と決定"
 status: "pending"
 created_at: "2024-01-01"
@@ -11,11 +11,11 @@ updated_at: "2024-01-01"
 completed_at: null
 ---
 
-# アクション: 設定要件の確認と決定
+# Subtask: 設定要件の確認と決定
 
-## 親タスク
+## 親Story
 
-[001-01: 共通設定整備](../tasks/001-01-common-config.md)
+[001-01: 共通設定整備](./001-01-common-config.md)
 
 ## ユーザーストーリー
 
@@ -75,5 +75,5 @@ describe('設定要件の確認と決定', () => {
 
 ## 参照ドキュメント
 
-- [ワークフロー定義](../../.ai/WORKFLOW.md)
-- [仕様フォーマット](../../.ai/SPEC_FORMAT.md)
+- [ワークフロー定義](../../../.ai/WORKFLOW.md)
+- [仕様フォーマット](../../../.ai/SPEC_FORMAT.md)

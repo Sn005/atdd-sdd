@@ -1,12 +1,12 @@
 ---
 name: spec-workflow
-description: 仕様駆動開発（SDD）ワークフローを自動発動で強制。タスク開始時にAC確認、TDD実行、完了時にACチェックを実施。スコープ外実装を禁止。Use when implementing features, creating new functionality, or when "実装して", "作成して", "開発して" keywords appear.
+description: 仕様駆動開発（SDD）ワークフローを自動発動で強制。Subtask開始時にAC確認、TDD実行、完了時にACチェックを実施。スコープ外実装を禁止。Use when implementing features, creating new functionality, or when "実装して", "作成して", "開発して" keywords appear.
 ---
 
 # Spec-Driven Development Workflow Skill
 
 仕様駆動開発（SDD）の**下流工程（実装）** を担当するスキルです。
-フェーズ → タスク → アクションの3階層構造に基づいた開発を行います。
+EPIC → Story → Subtaskの3階層構造に基づいた開発を行います。
 
 > **Note**: 仕様策定（上流工程）は `/spec` Skill で行います。
 > 連携フロー: `/spec`（仕様策定）→ `spec-workflow`（実装）
@@ -17,8 +17,8 @@ description: 仕様駆動開発（SDD）ワークフローを自動発動で強�
 
 - 実装して、作成して、開発して
 - 新機能実装
-- タスク開始、アクション開始
-- フェーズ、タスク、アクションへの言及
+- Subtask開始、Story開始
+- EPIC、Story、Subtaskへの言及
 
 ## 基本原則
 
@@ -26,7 +26,7 @@ description: 仕様駆動開発（SDD）ワークフローを自動発動で強�
 
 実装前に必ず以下を確認：
 
-1. `specs/actions/{id}.md` を読み込む
+1. `specs/{epic-id}/{story-id}/{subtask-id}.md` を読み込む
 2. ユーザーストーリーを確認
 3. ACを理解
 4. ユーザーに「このACで進めますか？」と確認
@@ -77,17 +77,17 @@ describe('ログイン', () => {
 
 ## ワークフロー詳細
 
-### Phase 1: タスク開始時（必須フロー）
+### Phase 1: Subtask開始時（必須フロー）
 
 ```typescript
-// 1. アクションファイルを読み込む
-const actionFile = await read(`specs/actions/{id}.md`)
+// 1. Subtaskファイルを読み込む
+const subtaskFile = await read(`specs/{epic-id}/{story-id}/{subtask-id}.md`)
 
 // 2. ACを確認
-const acceptanceCriteria = parseAC(actionFile)
+const acceptanceCriteria = parseAC(subtaskFile)
 
 // 3. ユーザーストーリーを確認
-const userStory = parseUserStory(actionFile)
+const userStory = parseUserStory(subtaskFile)
 
 // 4. ユーザーに確認
 await ask(`以下のACで実装を進めます。よろしいですか？
@@ -101,7 +101,7 @@ const testCases = deriveTestCases(acceptanceCriteria)
 
 ```typescript
 // 🔴 Red: テストを先に書く
-describe(actionTitle, () => {
+describe(subtaskTitle, () => {
   acceptanceCriteria.forEach(ac => {
     it(ac, async () => {
       // ACからテストケースを導出
@@ -133,18 +133,18 @@ acceptanceCriteria.forEach(ac => {
 await runTests() // All tests pass
 
 // 3. ステータス更新
-await updateActionFile({
+await updateSubtaskFile({
   status: 'completed',
   completed_at: new Date().toISOString()
 })
 
-// 4. 親タスクの確認
-if (allActionsCompleted(taskId)) {
-  await updateTaskFile({ status: 'completed' })
+// 4. 親Storyの確認
+if (allSubtasksCompleted(storyId)) {
+  await updateStoryFile({ status: 'completed' })
 }
 
-// 5. 次のアクションを提示
-console.log(`次のアクション: ${getNextAction()}`)
+// 5. 次のSubtaskを提示
+console.log(`次のSubtask: ${getNextSubtask()}`)
 ```
 
 ## スコープ判断
@@ -159,21 +159,21 @@ console.log(`次のアクション: ${getNextAction()}`)
 
 - ACに記載のない「ついでに」の改善
 - 将来必要になる「かもしれない」機能
-- 他のアクション/タスクで対応すべき機能
+- 他のSubtask/Storyで対応すべき機能
 
 ### スコープ外対応フロー
 
 ```typescript
 if (isOutOfScope(request)) {
   const response = `
-  ご依頼いただいた「${request}」は、現在のアクションのACに含まれていません。
+  ご依頼いただいた「${request}」は、現在のSubtaskのACに含まれていません。
 
   現在のAC:
   ${currentAC.map(ac => `- ${ac}`).join('\n')}
 
   対応案:
-  1. 現在のアクションでは実装しない
-  2. 別のアクションとして提案
+  1. 現在のSubtaskでは実装しない
+  2. 別のSubtaskとして提案
 
   どちらを選択しますか？`
 
@@ -184,7 +184,7 @@ if (isOutOfScope(request)) {
 ## テストファイル配置
 
 ```
-specs/actions/{id}.md  # アクション定義
+specs/{epic-id}/{story-id}/{subtask-id}.md  # Subtask定義
 {feature}/
 ├── service.ts         # 実装ファイル
 └── __dev__/
@@ -196,7 +196,7 @@ specs/actions/{id}.md  # アクション定義
 - ❌ ACなしでの実装開始
 - ❌ テストなしでの実装（TDD違反）
 - ❌ スコープ外の「ついでに」実装
-- ❌ 複数機能の同時実装（1アクション1機能）
+- ❌ 複数機能の同時実装（1 Subtask = 1機能）
 - ❌ ユーザー確認なしの仕様変更
 - ❌ 完了確認なしのステータス更新
 
@@ -238,12 +238,12 @@ if (testsFailed) {
 ```
 spec-workflow 開始
     │
-    ├─ アクションファイル読み込み
+    ├─ Subtaskファイル読み込み
     │
     ├─ AC確認・ユーザー承認
     │       │
     │       └─ 承認後 → /branch 発火
-    │          ブランチ: impl/{action-id}-{description}
+    │          ブランチ: impl/{subtask-id}-{description}
     │
     ├─ TDD実装
     │   - 🔴 Red: テスト作成
@@ -330,13 +330,13 @@ spec-workflow（実装）← 本Skill
 
 ## 使用例
 
-### 例1: 新規アクション実装
+### 例1: 新規Subtask実装
 
 ```
-ユーザー: 「001-01-01の設定要件アクションを実装して」
+ユーザー: 「001-01-01の設定要件Subtaskを実装して」
 
 [自動] spec-workflow Skill発動
-[自動] specs/actions/001-01-01.md を読み込み
+[自動] specs/001-environment-setup/001-01-common-config/001-01-01-config-requirements.md を読み込み
 
 Claude: 「以下のACで実装を進めます。よろしいですか？
 - 設定ファイル配置方針が明確に決定されていること
@@ -354,15 +354,15 @@ Claude: 「🔴 Red: テストケースを導出します...」
 ```
 ユーザー: 「ついでにCI/CDも設定して」
 
-Claude: 「ご依頼いただいた「CI/CD設定」は、現在のアクションのACに含まれていません。
+Claude: 「ご依頼いただいた「CI/CD設定」は、現在のSubtaskのACに含まれていません。
 
 現在のAC:
 - 設定ファイル配置方針が明確に決定されていること
 - ESLint、Prettier、TypeScriptの設定内容が仕様として確定していること
 
 対応案:
-1. 現在のアクションでは実装しない（推奨）
-2. 新規アクションとして定義する
+1. 現在のSubtaskでは実装しない（推奨）
+2. 新規Subtaskとして定義する
 
 どちらを選択しますか？」
 ```
