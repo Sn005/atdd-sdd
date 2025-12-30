@@ -1,7 +1,7 @@
 # /spec Skill - 仕様策定ワークフロー
 
 仕様駆動開発（SDD）の**上流工程**を担当するSkill。
-自然言語の要件から、構造化された仕様書（Phase/Task/Action）を段階的に生成します。
+自然言語の要件から、構造化された仕様書（EPIC/Story/Subtask）を段階的に生成します。
 
 ## 発動条件
 
@@ -17,7 +17,7 @@
 1. **段階的対話**: Requirements → Design → Tasks の3フェーズ
 2. **EARS記法**: 曖昧さのない受け入れ基準を生成
 3. **ユーザー承認**: 各フェーズで「次に進んで」を確認してからファイル生成
-4. **3階層出力**: Phase/Task/Actionファイルを適切に分割
+4. **3階層出力**: EPIC/Story/Subtaskファイルを適切に分割
 
 ---
 
@@ -76,9 +76,9 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  1. Phase/Task/Action分割                       │
-│     - 適切な粒度でActionに分割                  │
-│     - 1アクション = 1機能                       │
+│  1. EPIC/Story/Subtask分割                      │
+│     - 適切な粒度でSubtaskに分割                 │
+│     - 1 Subtask = 1機能                         │
 │     - 依存関係を整理                            │
 │                                                 │
 │  2. 実装順序の最適化                            │
@@ -102,21 +102,26 @@
 ┌─────────────────────────────────────────────────┐
 │  生成ファイル:                                  │
 │                                                 │
-│  specs/phases/{id}.md                           │
+│  specs/{epic-id}/{epic-id}.md                   │
 │  ├── ユーザーストーリー                         │
-│  ├── フェーズレベルAC                           │
-│  └── 関連タスクへのリンク                       │
+│  ├── EPICレベルAC                               │
+│  └── 関連Storyへのリンク                        │
 │                                                 │
-│  specs/tasks/{phase-id}-{task-id}.md            │
+│  specs/{epic-id}/{story-id}/{story-id}.md       │
 │  ├── ユーザーストーリー                         │
-│  ├── タスクレベルAC                             │
-│  └── 関連アクションへのリンク                   │
+│  ├── StoryレベルAC                              │
+│  └── 関連Subtaskへのリンク                      │
 │                                                 │
-│  specs/actions/{task-id}-{action-id}.md         │
+│  specs/{epic-id}/{story-id}/{subtask-id}.md     │
 │  ├── ユーザーストーリー                         │
 │  ├── EARS記法によるAC                           │
 │  ├── 設計セクション（該当する場合）             │
 │  └── テストケーステンプレート                   │
+│                                                 │
+│  一覧ファイル:                                  │
+│  specs/epic-list.md                             │
+│  specs/{epic-id}/story-list.md                  │
+│  specs/{epic-id}/{story-id}/subtask-list.md     │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -239,12 +244,13 @@
     ├─ Phase 3: Task Breakdown
     │       │
     │       └─ ユーザー確認後 → /branch 発火
-    │          ブランチ: spec/{action-id}-{description}
+    │          ブランチ: spec/{subtask-id}-{description}
     │
     ├─ ファイル生成
-    │   - specs/phases/{id}.md
-    │   - specs/tasks/{id}.md
-    │   - specs/actions/{id}.md
+    │   - specs/{epic-id}/{epic-id}.md
+    │   - specs/{epic-id}/{story-id}/{story-id}.md
+    │   - specs/{epic-id}/{story-id}/{subtask-id}.md
+    │   - 各 *-list.md ファイル
     │
     └─ 完了時 → /pr 発火
         PR: 仕様レビュー用
@@ -275,7 +281,7 @@ Claude: 仕様ファイルの生成が完了しました。
 
         ## Summary
         - 001-01-01 の仕様を策定
-        - specs/actions/001-01-01.md を作成
+        - specs/001-environment-setup/001-01-common-config/001-01-01-*.md を作成
 
         ## レビュー観点
         - [ ] ユーザーストーリーが明確か

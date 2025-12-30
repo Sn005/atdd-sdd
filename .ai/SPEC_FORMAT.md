@@ -3,41 +3,43 @@
 ## 概要
 
 このドキュメントは、AI駆動開発における仕様書のフォーマットを定義します。
-**フェーズ → タスク → アクション** の3階層構造で、各レベルにAcceptance Criteria（AC）とユーザーストーリーを必須とします。
+**EPIC → Story → Subtask** の3階層構造で、各レベルにAcceptance Criteria（AC）とユーザーストーリーを必須とします。
 
 ## 構造定義
 
 ```
 specs/
-├── phases/
-│   └── {phase-id}.md          # フェーズ定義
-├── tasks/
-│   └── {phase-id}-{task-id}.md    # タスク定義
-└── actions/
-    └── {phase-id}-{task-id}-{action-id}.md  # アクション定義
+├── epic-list.md                          # 全EPIC一覧
+└── {epic-id}/
+    ├── {epic-id}.md                      # EPIC定義
+    ├── story-list.md                     # このEPIC内のStory一覧
+    └── {story-id}/
+        ├── {story-id}.md                 # Story定義
+        ├── subtask-list.md               # このStory内のSubtask一覧
+        └── {subtask-id}.md               # Subtask定義
 ```
 
 ## 階層関係
 
 ```
-📋 フェーズ（Phase）
+📋 EPIC
   👤 ユーザーストーリー
-  AC (Acceptance Criteria)
-  └── 🎯 タスク（Task）
+  ✅ AC (Acceptance Criteria)
+  └── 🎯 Story
         👤 ユーザーストーリー
-        AC (Acceptance Criteria)
-      └── ⚡ アクション（Action）
+        ✅ AC (Acceptance Criteria)
+      └── ⚡ Subtask
             👤 ユーザーストーリー
-            AC (Acceptance Criteria)
+            ✅ AC (Acceptance Criteria)
 ```
 
 ---
 
-## フェーズファイル形式
+## EPICファイル形式
 
-**ファイル名**: `specs/phases/{phase-id}.md`
+**ファイル名**: `specs/{epic-id}/{epic-id}.md`
 
-**例**: `specs/phases/001-environment-setup.md`
+**例**: `specs/001-environment-setup/001-environment-setup.md`
 
 ```markdown
 ---
@@ -48,7 +50,7 @@ created_at: "2024-01-01"
 updated_at: "2024-01-01"
 ---
 
-# フェーズ: 環境構築
+# EPIC: 環境構築
 
 ## ユーザーストーリー
 
@@ -65,10 +67,10 @@ updated_at: "2024-01-01"
 - [ ] 各アプリで統一された開発環境が利用できること
 - [ ] ベースアプリケーションが開発・動作確認できること
 
-## 関連タスク
+## 関連Story
 
-- [001-01: 共通設定整備](../tasks/001-01-common-config.md)
-- [001-02: 基本アプリケーション作成](../tasks/001-02-base-app.md)
+- [001-01: 共通設定整備](./001-01-common-config/001-01-common-config.md)
+- [001-02: 基本アプリケーション作成](./001-02-base-app/001-02-base-app.md)
 
 ## 備考
 
@@ -77,28 +79,28 @@ updated_at: "2024-01-01"
 
 ---
 
-## タスクファイル形式
+## Storyファイル形式
 
-**ファイル名**: `specs/tasks/{phase-id}-{task-id}.md`
+**ファイル名**: `specs/{epic-id}/{story-id}/{story-id}.md`
 
-**例**: `specs/tasks/001-01-common-config.md`
+**例**: `specs/001-environment-setup/001-01-common-config/001-01-common-config.md`
 
 ```markdown
 ---
 id: "001-01"
-phase_id: "001"
-phase_title: "環境構築"
+epic_id: "001"
+epic_title: "環境構築"
 title: "共通設定整備"
 status: "pending" # pending | in_progress | completed
 created_at: "2024-01-01"
 updated_at: "2024-01-01"
 ---
 
-# タスク: 共通設定整備
+# Story: 共通設定整備
 
-## 親フェーズ
+## 親EPIC
 
-[001: 環境構築](../phases/001-environment-setup.md)
+[001: 環境構築](../001-environment-setup.md)
 
 ## ユーザーストーリー
 
@@ -115,11 +117,11 @@ updated_at: "2024-01-01"
 - [ ] 各アプリで `pnpm lint` が正常に動作すること
 - [ ] モノレポ全体で一貫したコードフォーマットが保たれること
 
-## 関連アクション
+## 関連Subtask
 
-- [001-01-01: 設定要件の確認と決定](../actions/001-01-01-config-requirements.md)
-- [001-01-02: ESLint設定作成](../actions/001-01-02-eslint-setup.md)
-- [001-01-03: Prettier設定作成](../actions/001-01-03-prettier-setup.md)
+- [001-01-01: 設定要件の確認と決定](./001-01-01-config-requirements.md)
+- [001-01-02: ESLint設定作成](./001-01-02-eslint-setup.md)
+- [001-01-03: Prettier設定作成](./001-01-03-prettier-setup.md)
 
 ## 備考
 
@@ -128,19 +130,19 @@ updated_at: "2024-01-01"
 
 ---
 
-## アクションファイル形式
+## Subtaskファイル形式
 
-**ファイル名**: `specs/actions/{phase-id}-{task-id}-{action-id}.md`
+**ファイル名**: `specs/{epic-id}/{story-id}/{subtask-id}.md`
 
-**例**: `specs/actions/001-01-01-config-requirements.md`
+**例**: `specs/001-environment-setup/001-01-common-config/001-01-01-config-requirements.md`
 
 ```markdown
 ---
 id: "001-01-01"
-phase_id: "001"
-task_id: "001-01"
-phase_title: "環境構築"
-task_title: "共通設定整備"
+epic_id: "001"
+story_id: "001-01"
+epic_title: "環境構築"
+story_title: "共通設定整備"
 title: "設定要件の確認と決定"
 status: "pending" # pending | in_progress | completed
 created_at: "2024-01-01"
@@ -148,11 +150,11 @@ updated_at: "2024-01-01"
 completed_at: null # 完了時に日付を記入
 ---
 
-# アクション: 設定要件の確認と決定
+# Subtask: 設定要件の確認と決定
 
-## 親タスク
+## 親Story
 
-[001-01: 共通設定整備](../tasks/001-01-common-config.md)
+[001-01: 共通設定整備](./001-01-common-config.md)
 
 ## ユーザーストーリー
 
@@ -171,7 +173,7 @@ completed_at: null # 完了時に日付を記入
 
 ## 設計（オプション）
 
-複雑なアクションの場合、実装前に技術設計を明記します。
+複雑なSubtaskの場合、実装前に技術設計を明記します。
 
 ### データフロー
 
@@ -238,7 +240,56 @@ describe('設定要件の確認と決定', () => {
 
 ## 参照ドキュメント
 
-- [ワークフロー定義](../../.ai/WORKFLOW.md)
+- [ワークフロー定義](../../../.ai/WORKFLOW.md)
+```
+
+---
+
+## 一覧ファイル形式
+
+### epic-list.md
+
+**ファイル名**: `specs/epic-list.md`
+
+```markdown
+# EPIC一覧
+
+このプロジェクトで管理しているEPICの一覧です。
+
+| ID | 名前 | 概要 | ステータス |
+|----|------|------|-----------|
+| [001](./001-environment-setup/001-environment-setup.md) | 環境構築 | 効率的な開発環境を構築する | pending |
+| [002](./002-user-auth/002-user-auth.md) | ユーザー認証 | ログイン機能を実装する | pending |
+```
+
+### story-list.md
+
+**ファイル名**: `specs/{epic-id}/story-list.md`
+
+```markdown
+# Story一覧 - EPIC: 環境構築
+
+このEPIC配下のStory一覧です。
+
+| ID | 名前 | 概要 | ステータス |
+|----|------|------|-----------|
+| [001-01](./001-01-common-config/001-01-common-config.md) | 共通設定整備 | コード品質を自動化する | pending |
+| [001-02](./001-02-base-app/001-02-base-app.md) | 基本アプリケーション作成 | 開発基盤を構築する | pending |
+```
+
+### subtask-list.md
+
+**ファイル名**: `specs/{epic-id}/{story-id}/subtask-list.md`
+
+```markdown
+# Subtask一覧 - Story: 共通設定整備
+
+このStory配下のSubtask一覧です。
+
+| ID | 名前 | 概要 | ステータス |
+|----|------|------|-----------|
+| [001-01-01](./001-01-01-config-requirements.md) | 設定要件の確認と決定 | 設定方針を明確にする | pending |
+| [001-01-02](./001-01-02-eslint-setup.md) | ESLint設定作成 | ESLintを導入する | pending |
 ```
 
 ---
@@ -247,9 +298,9 @@ describe('設定要件の確認と決定', () => {
 
 | レベル | フォーマット | 例 |
 |--------|-------------|-----|
-| フェーズ | `{3桁連番}` | `001`, `002` |
-| タスク | `{フェーズID}-{2桁連番}` | `001-01`, `001-02` |
-| アクション | `{タスクID}-{2桁連番}` | `001-01-01`, `001-01-02` |
+| EPIC | `{3桁連番}` | `001`, `002` |
+| Story | `{EPIC-ID}-{2桁連番}` | `001-01`, `001-02` |
+| Subtask | `{Story-ID}-{2桁連番}` | `001-01-01`, `001-01-02` |
 
 ## ステータス定義
 
@@ -359,6 +410,6 @@ THE SYSTEM SHALL 全てのAPIリクエストをログに記録する
 
 ## 完了マークのルール
 
-- 完了したアクション/タスク/フェーズは `status: "completed"` に変更
+- 完了したSubtask/Story/EPICは `status: "completed"` に変更
 - `completed_at` に完了日時を記入
 - AC のチェックボックスを `[x]` に更新

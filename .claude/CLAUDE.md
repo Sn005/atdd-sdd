@@ -5,7 +5,7 @@
 ## プロジェクト概要
 
 このリポジトリは **仕様駆動開発（SDD: Spec-Driven Development）** のテンプレートです。
-フェーズ → タスク → アクションの3階層構造で、ACベースの品質管理を行います。
+EPIC → Story → Subtaskの3階層構造で、ACベースの品質管理を行います。
 
 ## ドキュメント構成
 
@@ -21,17 +21,22 @@
     └── spec-workflow/  # 自動発動ワークフローSkill
 
 specs/                  # 仕様書本体
-├── phases/             # フェーズ定義
-├── tasks/              # タスク定義
-└── actions/            # アクション定義
+├── epic-list.md        # EPIC一覧
+└── {epic-id}/
+    ├── {epic-id}.md    # EPIC定義
+    ├── story-list.md   # Story一覧
+    └── {story-id}/
+        ├── {story-id}.md      # Story定義
+        ├── subtask-list.md    # Subtask一覧
+        └── {subtask-id}.md    # Subtask定義
 ```
 
 ## Claudeへの指示
 
 ### 必須実行フロー
 
-1. **タスク開始前**
-   - 該当アクションファイル（`specs/actions/{id}.md`）を読み込む
+1. **Subtask開始前**
+   - 該当Subtaskファイル（`specs/{epic-id}/{story-id}/{subtask-id}.md`）を読み込む
    - ユーザーストーリーとACを確認
    - ユーザーに「このACで進めますか？」と確認
 
@@ -43,7 +48,7 @@ specs/                  # 仕様書本体
 3. **完了時**
    - 全ACをチェック
    - ステータスを更新（status: "completed"）
-   - 次のアクションを提示
+   - 次のSubtaskを提示
 
 ### 基本ルール
 
@@ -57,8 +62,8 @@ specs/                  # 仕様書本体
 `spec-workflow` Skillが以下のキーワードで自動発動します：
 
 - 実装して、作成して、開発して
-- タスク開始、アクション開始
-- フェーズ、タスク、アクションへの言及
+- Subtask開始、Story開始
+- EPIC、Story、Subtaskへの言及
 
 ### 禁止事項
 
